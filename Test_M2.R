@@ -110,13 +110,17 @@ points(S_paij_adams[p,a,3,],type="b",col="blue")
 
 # first plot MSVPA/type II function:
 
-Both_sim <-  seq(0,1000,10)
-nsim     <-  length(Both_sim)
+B_sim <-  seq(0,1000,10)
+nsim     <-  length(B_sim)
 
 U_sim <- S_sim  <-  array(0, c(nsim,n_p,n_a,n_i,n_j))
 M2_sim <-  M2_sim_holsman  <-  array(0, c(nsim,n_i,n_j))
 
 for(itr in 1:nsim){
+  BIN <-B_ij
+  #BIN <-BIN*B_sim[itr]
+  BotherIN <- Bother*B_sim[itr]
+  
   U_sim[itr,,,,]    <-   curti_U_FUN(np    = n_p,
                                      na    = n_a,
                                      ni    = n_i,
@@ -124,27 +128,40 @@ for(itr in 1:nsim){
                                      ppi   = p_pi,
                                      gpaij = g_paij,
                                      v_ot  = v_other,
-                                     Bij   = B_ij,
-                                     Bot   = Both_sim[itr])
+                                     Bij   = BIN,
+                                     Bot   = BotherIN)
   
   for(p in 1:n_p)
     for(a in 1:n_a)
-      S_sim[itr, p,a,,]           <-  S_paijFUN(p=p,a=a,Bij=B_ij,Upaij=U_sim[itr,,,,], Bot=Both_sim[itr],ni=n_i,nj=n_j)
+      S_sim[itr, p,a,,]           <-  S_paijFUN(p=p,a=a,Bij=BIN,Upaij=U_sim[itr,,,,], Bot=BotherIN,ni=n_i,nj=n_j)
   
     for(i in 1:n_i){
       for(j in 1:n_j){
-          M2_sim[itr,i,j]         <- M2_Curti_FUN(  i = i, j = j, np=n_p,na=n_a, Bij=B_ij,
-                                                ration = ration_use,Upaij=U_sim[itr,,,,],Bot=Both_sim[itr])
-          M2_sim_holsman[itr,i,j] <- M2_Holsman_FUN(i = i, j = j, np=n_p,na=n_a, Bij=B_ij,
-                                                    ration = ration_use,Spaij=S_sim[itr,,,,],Bot=Both_sim[itr])
+          M2_sim[itr,i,j]         <- M2_Curti_FUN(  i = i, j = j, np=n_p,na=n_a, Bij=BIN,
+                                                ration = ration_use,Upaij=U_sim[itr,,,,],Bot=BotherIN)
+          M2_sim_holsman[itr,i,j] <- M2_Holsman_FUN(i = i, j = j, np=n_p,na=n_a, Bij=BIN,
+                                                    ration = ration_use,Spaij=S_sim[itr,,,,],Bot=BotherIN)
       }
     }
 }
     
-mmm <- melt(M2_sim); colnames(mmm)<-c("nitr","prey","age","M2")
-mmm2 <- melt(M2_sim_holsman); colnames(mmm2)<-c("nitr","prey","age","M2")
-dat<-mmm2%>%filter(prey==1,age==2)
-plot(Both_sim,dat$M2)
+mmm <- melt(M2_sim); colnames(mmm)<-c("itr","prey","age","M2"); mmm$B_other<- Bother*B_sim[mmm$itr]
+mmm2 <- melt(M2_sim_holsman); colnames(mmm2)<-c("itr","prey","age","M2"); mmm2$B_other<- Bother*B_sim[mmm2$itr]
+mmm$prey<-factor(mmm$prey,levels=1:n_i)
+mmm2$prey<-factor(mmm2$prey,levels=1:n_i)
+mmm$age<-factor(mmm$age,levels=1:n_a)
+mmm2$age<-factor(mmm2$age,levels=1:n_a)
+
+dat<-mmm2%>%filter(prey==1)
+
+#plot(B_sim,exp(-dat$M2))
+plot(Bother*B_sim,exp(-dat$M2))
+coll <- colorRampPalette( c("#00AFBB", "#E7B800", "#FC4E07"))
+ggplot(data=dat,aes(x=B_other,y=exp(-dat$M2))) +
+  geom_line(aes(x=B_other,y=exp(-dat$M2),col=age),size=1)+
+  facet_grid(.~prey,scales="free") + 
+  theme_minimal() +
+  scale_color_manual(values = coll(n_a))
 
 #now lets try it with some simulated stomach data:
 # 
