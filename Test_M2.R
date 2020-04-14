@@ -92,7 +92,6 @@ points(U_paij_adams_rescaleVother[p,a,2,],type="b",col="red")
 points(U_paij_adams_rescaleVother[p,a,3,],type="b",col="blue")
 
 
-
 # Fig 3: Plot S_paij
 # ---------------------------------------------
 
