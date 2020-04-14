@@ -74,6 +74,62 @@ M2_Adams_Vother_FUN <- function(i = 3, j = 4, np=n_p,na=n_a, ration=ration_pa,Bi
   #return(list(M2=M2,test=test))
   return(M2)
 }
+
+
+
+curti_U_FUN <- function(
+  np    = n_p,
+  na    = n_a,
+  ni    = n_i,
+  nj    = n_j,
+  ppi   = p_pi,
+  gpaij = g_paij,
+  v_ot  = v_other,
+  Bij   = B_ij,
+  Bot   = Bother){
+  
+  vpaij  <- Opaij  <-  array(0,c(np,na,ni,nj))
+  
+  votherscaled<-vpaij[,,1,1]*0
+  for(p in 1:np){
+    for(a in 1:na){
+      vpaij[p,a,,]         <-  ppi[p,]*gpaij[p,a,,]
+      v_scaled_paij[p,a,,] <-  vpaij[p,a,,]/(sum(vpaij[p,a,,])+(v_ot[p]))
+      votherscaled[p,a]    <-  v_ot[p]   /(sum(vpaij[p,a,,])+(v_ot[p]))
+    }
+  }
+  
+  votherscaled[p,a]+sum(v_scaled_paij[p,a,,])
+  # versus
+  v_ot[p]+sum(vpaij[p,a,,])
+  
+  
+  # eq 7 : available prey biomass for each predator p,a
+  for(p in 1:np){
+    for(a in 1:na){
+      Opaij[p,a,,]        <- v_scaled_paij[p,a,,]*Bij
+    }
+  }
+  
+  # eq 8 : other prey available:
+  Oother_pa        <- votherscaled*Bot
+  
+  # eq 10: total prey availble:
+  Opa         <-  Oother_pa + apply(Opaij,1:2,sum)
+  
+  # eq 11: total prey availble:
+  Upaij  <-   Opaij*0
+  for(p in 1:np){
+    for(a in 1:na){
+      Upaij[p,a,,] <- Opaij[p,a,,]/Opa[p,a]
+    }
+  }
+  
+  return(Upaij)
+  
+}
+
+
 # Fit parms functions:
 LL_Ufit<-function(par=c(
   logitPpi =rep(-1.3,n_p),

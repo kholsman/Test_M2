@@ -107,8 +107,45 @@ points(S_paij_adams[p,a,2,],type="b",col="red")
 points(S_paij_adams[p,a,3,],type="b",col="blue")
 
 
+## Now let's think beyon type II:
 
+# first plot MSVPA/type II function:
 
+Both_sim <-  seq(0,1000,10)
+nsim     <-  length(Both_sim)
+
+U_sim <- S_sim  <-  array(0, c(nsim,n_p,n_a,n_i,n_j))
+M2_sim <-  M2_sim_holsman  <-  array(0, c(nsim,n_i,n_j))
+
+for(itr in 1:nsim){
+  U_sim[itr,,,,]    <-   curti_U_FUN(np    = n_p,
+                                     na    = n_a,
+                                     ni    = n_i,
+                                     nj    = n_j,
+                                     ppi   = p_pi,
+                                     gpaij = g_paij,
+                                     v_ot  = v_other,
+                                     Bij   = B_ij,
+                                     Bot   = Both_sim[itr])
+  
+  for(p in 1:n_p)
+    for(a in 1:n_a)
+      S_sim[itr, p,a,,]           <-  S_paijFUN(p=p,a=a,Bij=B_ij,Upaij=U_sim[itr,,,,], Bot=Both_sim[itr],ni=n_i,nj=n_j)
+  
+    for(i in 1:n_i){
+      for(j in 1:n_j){
+          M2_sim[itr,i,j]         <- M2_Curti_FUN(  i = i, j = j, np=n_p,na=n_a, Bij=B_ij,
+                                                ration = ration_use,Upaij=U_sim[itr,,,,],Bot=Both_sim[itr])
+          M2_sim_holsman[itr,i,j] <- M2_Holsman_FUN(i = i, j = j, np=n_p,na=n_a, Bij=B_ij,
+                                                    ration = ration_use,Spaij=S_sim[itr,,,,],Bot=Both_sim[itr])
+      }
+    }
+}
+    
+mmm <- melt(M2_sim); colnames(mmm)<-c("nitr","prey","age","M2")
+mmm2 <- melt(M2_sim_holsman); colnames(mmm2)<-c("nitr","prey","age","M2")
+dat<-mmm2%>%filter(prey==1,age==2)
+plot(Both_sim,dat$M2)
 
 #now lets try it with some simulated stomach data:
 # 

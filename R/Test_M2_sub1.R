@@ -107,6 +107,7 @@ for(a in 1:n_a){
   g_aj[a,] <- 1-inv.logit((1:n_a)-(a/2))
 }
 
+
 v_other_scaled<-v_paij[,,1,1]*0
 
 for(p in 1:n_p){
