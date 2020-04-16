@@ -163,3 +163,4 @@ ggplot(data=dat,aes(x=B_other,y=exp(-dat$M2))) +
   theme_minimal() +
   scale_color_manual(values = coll(n_a))
 
+## n
