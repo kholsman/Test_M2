@@ -178,7 +178,7 @@ for(i in 1:n_i){
     
     M2_ij_curti[i,j]       <- M2_Curti_FUN(i = i, j = j, np=n_p,na=n_a, Bij=B_ij,ration = ration_use,Upaij=U_paij_curti,Bot=Bother)
     M2_ij_curti_wrong[i,j] <- M2_Curti_FUN(i = i, j = j, np=n_p,na=n_a, Bij=B_ij,ration = ration_use,Upaij=U_paij_curti_wrong,Bot=Bother)
-    M2_ij_adams[i,j]       <- M2_Adams_FUN(i = i, j = j, np=n_p,na=n_a, Bij=B_ij,ration = ration_use,Ppi=p_pi,gpaij=g_paij,Bot=Bother) 
+    M2_ij_adams[i,j]       <- M2_Adams_FUN       (i = i, j = j, np=n_p,na=n_a, Bij=B_ij,ration = ration_use,Ppi=p_pi,gpaij=g_paij,Bot=Bother) 
     M2_ij_adams_fixed[i,j] <- M2_Adams_Vother_FUN(i = i, j = j, np=n_p,na=n_a, Bij=B_ij,ration = ration_use,Ppi=p_pi,gpaij=g_paij,Bot=Bother,Vot=v_curti) 
      }
 }
