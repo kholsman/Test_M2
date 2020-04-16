@@ -170,7 +170,7 @@ S_paij[p,a,,]
 ration_use <- ration_pa  # ration is a function of predator weight
 
 
-M2_ij_curti <- M2_ij_curti_wrong <-  M2_ij_adams  <-  M2_ij_holsman  <-  M2_ij_holsman_adamsSpaij  <-  M2_ij_adams_fixed  <-  B_ij*0
+M2_ij_curti <- M2_ij_curti_wrong <-  M2_ij_adams  <-  M2_ij_holsman  <-  M2_ij_holsman_adamsSpaij  <-  M2_ij_adams_Votherincl  <-  B_ij*0
 for(i in 1:n_i){
   for(j in 1:n_j){
     M2_ij_holsman[i,j]                <- M2_Holsman_FUN(    i = i, j = j, np=n_p,na=n_a, Bij=B_ij,ration = ration_use,Spaij=S_paij,Bot=Bother)
@@ -179,6 +179,6 @@ for(i in 1:n_i){
     M2_ij_curti[i,j]       <- M2_Curti_FUN(i = i, j = j, np=n_p,na=n_a, Bij=B_ij,ration = ration_use,Upaij=U_paij_curti,Bot=Bother)
     M2_ij_curti_wrong[i,j] <- M2_Curti_FUN(i = i, j = j, np=n_p,na=n_a, Bij=B_ij,ration = ration_use,Upaij=U_paij_curti_wrong,Bot=Bother)
     M2_ij_adams[i,j]       <- M2_Adams_FUN       (i = i, j = j, np=n_p,na=n_a, Bij=B_ij,ration = ration_use,Ppi=p_pi,gpaij=g_paij,Bot=Bother) 
-    M2_ij_adams_fixed[i,j] <- M2_Adams_Vother_FUN(i = i, j = j, np=n_p,na=n_a, Bij=B_ij,ration = ration_use,Ppi=p_pi,gpaij=g_paij,Bot=Bother,Vot=v_curti) 
+    M2_ij_adams_Votherincl[i,j] <- M2_Adams_Vother_FUN(i = i, j = j, np=n_p,na=n_a, Bij=B_ij,ration = ration_use,Ppi=p_pi,gpaij=g_paij,Bot=Bother,Vot=v_curti) 
      }
 }

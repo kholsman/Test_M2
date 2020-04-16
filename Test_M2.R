@@ -62,7 +62,7 @@ plotM2(M2_list=list(
   Holsman = M2_ij_holsman,
   Adams   = M2_ij_adams,
   Holsman_AdamsSpaij = M2_ij_holsman_adamsSpaij,
-  Adams_fix = M2_ij_adams_fixed))
+  Adams_Votherincl = M2_ij_adams_Votherincl))
 
 # other plots:
 plotB()  # plot B_ij
@@ -114,7 +114,7 @@ B_sim <-  c(seq(0,10,.1),seq(10,100,1))
 nsim     <-  length(B_sim)
 
 U_sim <- S_sim  <-  array(0, c(nsim,n_p,n_a,n_i,n_j))
-M2_sim <-  M2_sim_holsman  <-  M2_sim_adams  <-  M2_sim_adams_fixed  <- array(0, c(nsim,n_i,n_j))
+M2_sim <-  M2_sim_holsman  <-  M2_sim_adams  <-  M2_sim_Adams_Votherincl  <- array(0, c(nsim,n_i,n_j))
 
 for(itr in 1:nsim){
   BIN <-B_ij
@@ -143,7 +143,7 @@ for(itr in 1:nsim){
                                                     ration = ration_use,Spaij=S_sim[itr,,,,],Bot=BotherIN)
           M2_sim_adams[itr,i,j]        <-  M2_Adams_FUN(i = i, j = j, np=n_p,na=n_a, Bij=BIN,
                                                     ration = ration_use,Ppi=p_pi,gpaij=g_paij,Bot=BotherIN)
-          M2_sim_adams_fixed[itr,i,j]   <-  M2_Adams_Vother_FUN(i = i, j = j, np=n_p,na=n_a, Bij=BIN,
+          M2_sim_Adams_Votherincl[itr,i,j]   <-  M2_Adams_Vother_FUN(i = i, j = j, np=n_p,na=n_a, Bij=BIN,
                                                    ration = ration_use,Ppi=p_pi,gpaij=g_paij,Bot=BotherIN,Vot=v_curti)
           
       }
@@ -153,12 +153,12 @@ for(itr in 1:nsim){
 mmm <- melt(M2_sim); colnames(mmm)<-c("itr","prey","age","M2"); mmm$B_other<- Bother*B_sim[mmm$itr]
 mmm2 <- melt(M2_sim_holsman); colnames(mmm2)<-c("itr","prey","age","M2"); mmm2$B_other<- Bother*B_sim[mmm2$itr]
 mmm3 <- melt(M2_sim_adams); colnames(mmm3)<-c("itr","prey","age","M2"); mmm3$B_other<- Bother*B_sim[mmm3$itr]
-mmm4 <- melt(M2_sim_adams_fixed); colnames(mmm4)<-c("itr","prey","age","M2"); mmm4$B_other<- Bother*B_sim[mmm4$itr]
+mmm4 <- melt(M2_sim_Adams_Votherincl); colnames(mmm4)<-c("itr","prey","age","M2"); mmm4$B_other<- Bother*B_sim[mmm4$itr]
 
 mmm$M2_model <-"Curti"
 mmm2$M2_model <-"Holsman"
 mmm3$M2_model <-"Adams"
-mmm4$M2_model <-"Adams_fixed"
+mmm4$M2_model <-"Adams_Votherincl"
 
 mmm$prey<-factor(mmm$prey,levels=1:n_i)
 mmm2$prey<-factor(mmm2$prey,levels=1:n_i)
@@ -184,7 +184,7 @@ ggplot(data=dat,aes(x=B_other,y=exp(-dat$M2))) +
 #plot(B_sim,exp(-dat$M2))
 #plot(Bother*B_sim,exp(-dat$M2))
 dat<-rbind(mmm,mmm2,mmm3,mmm4)%>%filter(prey==1)
-dat$M2_model<-factor(dat$M2_model,levels=c("Curti","Holsman","Adams","Adams_fixed"))
+dat$M2_model<-factor(dat$M2_model,levels=c("Curti","Holsman","Adams","Adams_Votherincl"))
 
 coll <- colorRampPalette( c("#00AFBB", "#E7B800", "#FC4E07"))
 # survival
@@ -195,11 +195,12 @@ ggplot(data=dat,aes(x=B_other/1e6,y=exp(-dat$M2))) +
   scale_color_manual(values = coll(n_a))
 
 # M2
+if(1 ==10){
 ggplot(data=dat,aes(x=B_other/1e6,y=dat$M2)) +
   geom_line(aes(x=B_other/1e6,y=dat$M2,col=age),size=1)+
   facet_grid(prey~M2_model,scales="free") + 
   theme_minimal() +
   scale_color_manual(values = coll(n_a))
-
+}
 
 ## n
